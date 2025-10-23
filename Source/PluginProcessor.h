@@ -1,6 +1,7 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#include "SineWave.h"
 
 //==============================================================================
 class AudioPluginAudioProcessor final : public juce::AudioProcessor
@@ -43,6 +44,9 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    float sineAmplitude {0.2f};
+    float sineFrequency {440.f};
+    SineWave *sineWave = new SineWave(sineAmplitude, sineFrequency);
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
 };
