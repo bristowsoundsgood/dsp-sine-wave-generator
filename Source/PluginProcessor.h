@@ -2,6 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "SineWave.h"
+#include "SineWaveDSP.h"
 
 //==============================================================================
 class AudioPluginAudioProcessor final : public juce::AudioProcessor
@@ -46,7 +47,8 @@ public:
 private:
     float sineAmplitude {0.2f};
     float sineFrequency {440.f};
-    SineWave *sineWave = new SineWave(sineAmplitude, sineFrequency);
+    
+    std::vector<SineWaveDSP> sineWaves;                             // 1 Sine Wave per channel
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
 };

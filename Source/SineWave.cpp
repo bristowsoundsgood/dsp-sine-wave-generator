@@ -11,7 +11,6 @@ SineWave::SineWave(const float amplitude, const float frequency) {
 }
 
 void SineWave::prepare(const double sampleRate, const int nChannels) {              // Preparing all member variables before processing. Called by PluginProcessor.cpp during preparation.
-
     m_currentSampleRate = sampleRate;
     m_currentTime.resize(nChannels, 0.0f);
     m_timeIncrement = static_cast<float>(1 / sampleRate);

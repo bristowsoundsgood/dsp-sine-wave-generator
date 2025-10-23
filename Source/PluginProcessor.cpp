@@ -86,10 +86,15 @@ void AudioPluginAudioProcessor::changeProgramName (int index, const juce::String
 //==============================================================================
 void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
     juce::ignoreUnused (sampleRate, samplesPerBlock);
-    sineWave->prepare(sampleRate, getTotalNumOutputChannels());
+
+    // Create a SineWaveDSP object for each channel
+    sineWaves.resize(getTotalNumOutputChannels(), { sineAmplitude, sineFrequency });
+
+    // Prepare each SineWaveDSP object
+    for (auto& wave : sineWaves) {
+        wave.prepare(sampleRate);
+    }
 }
 
 void AudioPluginAudioProcessor::releaseResources()
@@ -146,14 +151,10 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
-        juce::ignoreUnused (channelData);
-        // ..do something to the data...
+    for (int channel = 0; channel < buffer.getNumChannels(); ++channel) {
+        auto* output = buffer.getWritePointer(channel);
+        sineWaves[channel].process(output, buffer.getNumSamples());
     }
-
-    sineWave->process(buffer);
 }
 
 //==============================================================================
