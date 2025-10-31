@@ -3,12 +3,14 @@
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p)
-    : AudioProcessorEditor (&p), processorRef (p)
+    : AudioProcessorEditor (&p), processorRef (p), freqSlider ()
 {
     juce::ignoreUnused (processorRef);
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
+
     setSize (400, 300);
+
+    // Configure child components
+    addAndMakeVisible(freqSlider);
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
@@ -18,16 +20,14 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 //==============================================================================
 void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
-    g.setColour (juce::Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    g.fillAll(juce::Colours::slategrey);
+    g.setColour(juce::Colours::white);
+    g.drawFittedText("Sine Waves Test", getLocalBounds(), juce::Justification::centredTop, 1);
 }
 
 void AudioPluginAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    juce::Rectangle<int> bounds = getLocalBounds();
+    freqSlider.setBounds(bounds.getCentreX() - freqSlider.getWidth() / 2, bounds.getCentreY() - freqSlider.getHeight() / 2,
+        freqSlider.getWidth(), freqSlider.getHeight());
 }

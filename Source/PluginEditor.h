@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PluginProcessor.h"
+#include "ParameterSlider.h"
 
 //==============================================================================
 class AudioPluginAudioProcessorEditor final : public juce::AudioProcessorEditor
@@ -9,9 +10,11 @@ public:
     explicit AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor&);
     ~AudioPluginAudioProcessorEditor() override;
 
-    //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+
+    // Child components
+    ParameterSlider freqSlider {};
 
 private:
     // This reference is provided as a quick way for your editor to

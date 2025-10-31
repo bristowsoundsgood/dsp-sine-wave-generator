@@ -6,7 +6,8 @@
 #include <cmath>
 #include <numbers>
 
-SineWaveDSP::SineWaveDSP(float amplitude, float frequency) {
+SineWaveDSP::SineWaveDSP(float amplitude, float frequency)
+{
     m_amplitude = amplitude;
     m_frequency = frequency;
     m_sampleRate = 0.0f;
@@ -14,16 +15,18 @@ SineWaveDSP::SineWaveDSP(float amplitude, float frequency) {
     m_timeIncrement = 0.0f;
 }
 
-void SineWaveDSP::prepare(const double sampleRate) {
+void SineWaveDSP::prepare(const double sampleRate)
+{
     m_sampleRate = static_cast<float>(sampleRate);
     m_timeIncrement = static_cast<float>(1 / sampleRate);
 }
 
-void SineWaveDSP::process(float* output, const int numSamples) {
+void SineWaveDSP::process(float* output, const int numSamples)
+{
     // Pass each sample through sine wave function
-    for (int sample = 0; sample < numSamples; ++sample) {
+    for (int sample = 0; sample < numSamples; ++sample)
+    {
         output[sample] = m_amplitude * sinf(2.0f * std::numbers::pi_v<float> * m_frequency * m_currentTime);
         m_currentTime += m_timeIncrement;
     }
 }
-
