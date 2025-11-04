@@ -2,6 +2,7 @@
 
 #include "PluginProcessor.h"
 #include "ParameterSlider.h"
+#include <juce_gui_basics/juce_gui_basics.h>
 
 //==============================================================================
 class AudioPluginAudioProcessorEditor final : public juce::AudioProcessorEditor
@@ -13,10 +14,12 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
+private:
     // Child components
     ParameterSlider freqSlider {};
+    juce::Label freqLabel {"Frequency Label", "Frequency"};
+    juce::TextButton playButton {};
 
-private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     AudioPluginAudioProcessor& processorRef;
