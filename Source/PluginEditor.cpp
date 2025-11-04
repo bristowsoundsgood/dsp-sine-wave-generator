@@ -1,12 +1,31 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+namespace EditorLayout
+{
+    static constexpr int sliderWidth {300};
+    static constexpr int sliderHeight {200};
+    static constexpr int sliderTextBoxWidth {100};
+    static constexpr int sliderTextBoxHeight {50};
+    static constexpr float sliderMinValue {0.0f};
+    static constexpr float sliderMaxValue {100.0f};
+    static constexpr float sliderStepValue {0.01f};
+    static constexpr bool sliderIsReadOnly {true};
+    static constexpr int labelWidth {100};
+    static constexpr int labelHeight {20};
+    static constexpr int labelBottomMargin {60};
+    static constexpr int btnWidth {50};
+    static constexpr int btnHeight {20};
+    static constexpr int btnBottomMargin {100};
+}
+
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p)
-    : AudioProcessorEditor (&p), processorRef (p), freqSlider ()
+    : AudioProcessorEditor (&p), processorRef (p)
 {
     juce::ignoreUnused (processorRef);
 
+    // Set bounds of main window
     setSize (400, 300);
 
     // Configure child components
@@ -44,14 +63,17 @@ void AudioPluginAudioProcessorEditor::resized()
 {
     juce::Rectangle<int> bounds = getLocalBounds();
 
-    // Position child components
-    freqSlider.setBounds(bounds.getCentreX() - freqSlider.getWidth() / 2, bounds.getCentreY() - freqSlider.getHeight() / 2,
-        freqSlider.getWidth(), freqSlider.getHeight());
+    // Render child components
+    freqSlider.setBounds(bounds.getCentreX() - EditorLayout::sliderWidth / 2, bounds.getCentreY() - EditorLayout::sliderHeight / 2,
+        EditorLayout::sliderWidth, EditorLayout::sliderHeight);
 
-    freqLabel.setBounds(bounds.getCentreX() - 50, bounds.getCentreY() - 60, 100, 20);
+    freqSlider.setRange(EditorLayout::sliderMinValue, EditorLayout::sliderMaxValue, EditorLayout::sliderStepValue);
+    freqSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, EditorLayout::sliderIsReadOnly, EditorLayout::sliderTextBoxWidth, EditorLayout::sliderTextBoxHeight);
+
+    freqLabel.setBounds(bounds.getCentreX() - EditorLayout::labelWidth / 2, bounds.getCentreY() - EditorLayout::labelBottomMargin, EditorLayout::labelWidth, EditorLayout::labelHeight);
     freqLabel.setJustificationType(juce::Justification::centred);
 
-    playButton.setBounds(bounds.getCentreX() - 20, freqSlider.getBounds().getY() + 100, 40, 20);
+    playButton.setBounds(bounds.getCentreX() - EditorLayout::btnWidth / 2, freqSlider.getBounds().getY() + EditorLayout::btnBottomMargin, EditorLayout::btnWidth, EditorLayout::btnHeight);
     playButton.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colours::red);
     playButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::limegreen);
 }

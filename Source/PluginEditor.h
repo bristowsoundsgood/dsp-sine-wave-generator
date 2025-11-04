@@ -1,7 +1,6 @@
 #pragma once
 
 #include "PluginProcessor.h"
-#include "ParameterSlider.h"
 #include <juce_gui_basics/juce_gui_basics.h>
 
 //==============================================================================
@@ -16,7 +15,7 @@ public:
 
 private:
     // Child components
-    ParameterSlider freqSlider {};
+    juce::Slider freqSlider {};
     juce::Label freqLabel {"Frequency Label", "Frequency"};
     juce::TextButton playButton {};
 
