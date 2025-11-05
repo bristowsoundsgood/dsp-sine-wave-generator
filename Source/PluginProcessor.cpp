@@ -10,7 +10,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ), state(*this, nullptr, "parameters", createParameters())
 {
 }
 
@@ -95,6 +95,10 @@ void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     for (auto& wave : sineWaves) {
         wave.prepare(sampleRate);
     }
+
+    // Handle parameter state(s)
+    paramFreq = state.getRawParameterValue("sineFreq");
+    paramPlaying = state.getRawParameterValue("play");
 }
 
 void AudioPluginAudioProcessor::releaseResources()
@@ -136,24 +140,22 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < buffer.getNumChannels(); ++channel) {
-        auto* output = buffer.getWritePointer(channel);
-        sineWaves[channel].process(output, buffer.getNumSamples());
+    // Get parameter states
+    const float currentFreq = paramFreq->load();
+    const bool isPlaying = static_cast<bool>(paramPlaying->load());
+
+    for (auto& s : sineWaves) s.setFrequency(currentFreq);
+
+    // Conditional processing
+    if (isPlaying)
+    {
+        for (int channel = 0; channel < buffer.getNumChannels(); ++channel) {
+            auto* output = buffer.getWritePointer(channel);
+            sineWaves[channel].process(output, buffer.getNumSamples());
+        }
     }
 }
 
@@ -189,4 +191,23 @@ void AudioPluginAudioProcessor::setStateInformation (const void* data, int sizeI
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new AudioPluginAudioProcessor();
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::createParameters()
+{
+    return
+    {
+            // Frequency parameter
+            std::make_unique<juce::AudioParameterFloat>
+            (
+               juce::ParameterID {"sineFreq"},
+               "Frequency",
+               20.0f,
+               20000.0f,
+               220.0f
+           ),
+
+            // Bypass parameter
+            std::make_unique<juce::AudioParameterBool>(juce::ParameterID {"play"}, "Play", true)
+        };
 }

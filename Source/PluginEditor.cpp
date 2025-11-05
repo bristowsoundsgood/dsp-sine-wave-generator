@@ -7,8 +7,8 @@ namespace EditorLayout
     static constexpr int sliderHeight {200};
     static constexpr int sliderTextBoxWidth {100};
     static constexpr int sliderTextBoxHeight {50};
-    static constexpr float sliderMinValue {0.0f};
-    static constexpr float sliderMaxValue {100.0f};
+    static constexpr float sliderMinValue {20.0f};
+    static constexpr float sliderMaxValue {20000.0f};
     static constexpr float sliderStepValue {0.01f};
     static constexpr bool sliderIsReadOnly {true};
     static constexpr int labelWidth {100};
@@ -21,7 +21,8 @@ namespace EditorLayout
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p)
-    : AudioProcessorEditor (&p), processorRef (p)
+    : AudioProcessorEditor (&p), processorRef (p),
+        freqSliderAttachment(processorRef.getState(), "sineFreq", freqSlider), playButtonAttachment(processorRef.getState(), "play", playButton)
 {
     juce::ignoreUnused (processorRef);
 
@@ -34,7 +35,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     addAndMakeVisible(playButton);
 
     playButton.setButtonText("Playing");
-    playButton.setToggleState(true, juce::NotificationType::dontSendNotification);
+    // bypassButton.setToggleState(true, juce::NotificationType::dontSendNotification);
     playButton.setClickingTogglesState(true);
 
     playButton.onClick = [this] () -> void
@@ -67,7 +68,6 @@ void AudioPluginAudioProcessorEditor::resized()
     freqSlider.setBounds(bounds.getCentreX() - EditorLayout::sliderWidth / 2, bounds.getCentreY() - EditorLayout::sliderHeight / 2,
         EditorLayout::sliderWidth, EditorLayout::sliderHeight);
 
-    freqSlider.setRange(EditorLayout::sliderMinValue, EditorLayout::sliderMaxValue, EditorLayout::sliderStepValue);
     freqSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, EditorLayout::sliderIsReadOnly, EditorLayout::sliderTextBoxWidth, EditorLayout::sliderTextBoxHeight);
 
     freqLabel.setBounds(bounds.getCentreX() - EditorLayout::labelWidth / 2, bounds.getCentreY() - EditorLayout::labelBottomMargin, EditorLayout::labelWidth, EditorLayout::labelHeight);

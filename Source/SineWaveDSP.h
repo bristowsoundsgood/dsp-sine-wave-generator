@@ -13,8 +13,8 @@ public:
     void prepare(const double sampleRate);
     void process(float* output, const int numSamples);
 
-    float getAmplitude() const { return m_amplitude; }
-    float getFrequency() const { return m_frequency; }
+    [[nodiscard]] float getAmplitude() const { return m_amplitude; }
+    [[nodiscard]] float getFrequency() const { return m_frequency; }
     void setAmplitude(const float newAmplitude) { m_amplitude = newAmplitude; }
     void setFrequency(const float newFrequency) { m_frequency = newFrequency; }
 
