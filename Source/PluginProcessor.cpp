@@ -1,6 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-
+#include "SineWaveDSP.h"
 //==============================================================================
 AudioPluginAudioProcessor::AudioPluginAudioProcessor()
      : AudioProcessor (BusesProperties()
@@ -89,7 +89,7 @@ void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     juce::ignoreUnused (sampleRate, samplesPerBlock);
 
     // Create a SineWaveDSP object for each channel
-    sineWaves.resize(getTotalNumOutputChannels(), { sineAmplitude, sineFrequency });
+    sineWaves.resize(getTotalNumOutputChannels(), {});
 
     // Prepare each SineWaveDSP object
     for (auto& wave : sineWaves) {
@@ -147,6 +147,7 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     const float currentFreq = paramFreq->load();
     const bool isPlaying = static_cast<bool>(paramPlaying->load());
 
+    // Set frequency based on current parameter value
     for (auto& s : sineWaves) s.setFrequency(currentFreq);
 
     // Conditional processing
@@ -202,9 +203,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::c
             (
                juce::ParameterID {"sineFreq"},
                "Frequency",
-               20.0f,
-               20000.0f,
-               220.0f
+               SineWaveDefaults::defaultMinValue,
+               SineWaveDefaults::defaultMaxValue,
+               SineWaveDefaults::defaultFrequency
            ),
 
             // Bypass parameter

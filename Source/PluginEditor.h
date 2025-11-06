@@ -19,9 +19,9 @@ private:
     AudioPluginAudioProcessor& processorRef;
 
     // Child components
-    juce::Slider freqSlider {};
-    juce::Label freqLabel {"Frequency Label", "Frequency"};
-    juce::TextButton playButton {};
+    juce::Slider freqSlider;
+    juce::Label freqLabel;
+    juce::TextButton playButton;
 
     // Parameter trackers
     juce::AudioProcessorValueTreeState::SliderAttachment freqSliderAttachment;

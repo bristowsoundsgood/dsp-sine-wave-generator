@@ -46,13 +46,13 @@ public:
     [[nodiscard]] juce::AudioProcessorValueTreeState& getState() { return state; };
 
 private:
-    float sineAmplitude {0.2f};
-    float sineFrequency {440.f};
     std::vector<SineWaveDSP> sineWaves;                             // 1 Sine Wave per channel
 
+    // Parameter management
     juce::AudioProcessorValueTreeState state;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
 
+    // Sine wave parameters
     std::atomic<float>* paramFreq{};
     std::atomic<float>* paramPlaying{};
 

@@ -7,9 +7,7 @@ namespace EditorLayout
     static constexpr int sliderHeight {200};
     static constexpr int sliderTextBoxWidth {100};
     static constexpr int sliderTextBoxHeight {50};
-    static constexpr float sliderMinValue {20.0f};
-    static constexpr float sliderMaxValue {20000.0f};
-    static constexpr float sliderStepValue {0.01f};
+    static constexpr float sliderInterval {1.0f};
     static constexpr bool sliderIsReadOnly {true};
     static constexpr int labelWidth {100};
     static constexpr int labelHeight {20};
@@ -21,7 +19,7 @@ namespace EditorLayout
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p)
-    : AudioProcessorEditor (&p), processorRef (p),
+    : AudioProcessorEditor (&p), processorRef (p), freqLabel("Frequency Label", "Frequency"),
         freqSliderAttachment(processorRef.getState(), "sineFreq", freqSlider), playButtonAttachment(processorRef.getState(), "play", playButton)
 {
     juce::ignoreUnused (processorRef);
@@ -35,7 +33,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     addAndMakeVisible(playButton);
 
     playButton.setButtonText("Playing");
-    // bypassButton.setToggleState(true, juce::NotificationType::dontSendNotification);
     playButton.setClickingTogglesState(true);
 
     playButton.onClick = [this] () -> void
@@ -62,13 +59,14 @@ void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
 
 void AudioPluginAudioProcessorEditor::resized()
 {
-    juce::Rectangle<int> bounds = getLocalBounds();
+    const juce::Rectangle<int> bounds = getLocalBounds();
 
     // Render child components
     freqSlider.setBounds(bounds.getCentreX() - EditorLayout::sliderWidth / 2, bounds.getCentreY() - EditorLayout::sliderHeight / 2,
         EditorLayout::sliderWidth, EditorLayout::sliderHeight);
 
     freqSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, EditorLayout::sliderIsReadOnly, EditorLayout::sliderTextBoxWidth, EditorLayout::sliderTextBoxHeight);
+    freqSlider.setRange(220.0f, 20000.0f, EditorLayout::sliderInterval);
 
     freqLabel.setBounds(bounds.getCentreX() - EditorLayout::labelWidth / 2, bounds.getCentreY() - EditorLayout::labelBottomMargin, EditorLayout::labelWidth, EditorLayout::labelHeight);
     freqLabel.setJustificationType(juce::Justification::centred);
